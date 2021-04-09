@@ -1,4 +1,4 @@
-FROM node:slim
+FROM node:carbon
 
 ARG MAIN_APP
 ENV APPNAME ${MAIN_APP}
