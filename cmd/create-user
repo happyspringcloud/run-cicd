@@ -8,14 +8,33 @@ if ([ $# == 0 ]) || ([ $# -eq 1 ] && [ "$1" == "-h" -o "$1" == "--help" ]); then
   exit 1
 fi
 
+OS=Unknown
+hostnamectl | grep CentOS 2>/dev/null
+if [ $? -eq 0 ]; then
+  OS=CentOS 
+fi
+hostnamectl | grep Ubuntu 2>/dev/null
+if [ $? -eq 0 ]; then
+  OS=Ubuntu 
+fi
+echo "OS: ${OS}"
+if [ "${OS}" == "Unknown" ]; then
+  echo "Unsupported OS"
+  exit 1
+fi
+
 user=$1
 
 grep ${user} /etc/passwd 2>/dev/null
 if [ $? -eq 0 ]; then
   echo "${user} is already exists"
 else
-  sudo useradd ${user}
-  sudo passwd ${user}
+  if [ "${OS}" == "Centos" ]; then
+    sudo useradd ${user}
+    sudo passwd ${user}
+  else
+    sudo adduser ${user} 
+  fi
   sudo usermod -aG docker ${user}
 fi
 
