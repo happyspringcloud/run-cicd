@@ -80,7 +80,7 @@ fi
 echo "STEP4. Build image "
 echo "image: ${image_registry}/${image_project}/${image_repository}:${image_tag}"
 
-sed "s@{{ BASE_IMAGE }}@${container_base_image}@g" ${CTRLDIR}/dockerfile/${dockerfile_name > tmp && mv tmp ${CTRLDIR}/dockerfile/${dockerfile_name  # change base image
+sed "s@{{ BASE_IMAGE }}@${container_base_image}@g" ${CTRLDIR}/dockerfile/${dockerfile_name} > tmp && mv tmp ${CTRLDIR}/dockerfile/${dockerfile_name}  # change base image
 
 if [ "${devlang}" == "java" ]; then
   echo "*** RUN -> docker build --build-arg ARTIFACTORY_FILE=${image_repository}.jar -f ${CTRLDIR}/dockerfile/${dockerfile_name} -t ${image_registry}/${image_project}/${image_repository}:${image_tag} ${basedir}"
