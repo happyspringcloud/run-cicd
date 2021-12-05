@@ -22,7 +22,7 @@ echo ""
 echo "STEP1: Get Parameters"
 
 # get parameters
-if ([ $# -lt 4 ]) || ([ $# -eq 1 ] && [ "$1" == "-h" -o "$1" == "--help" ]); then
+if ([ $# -lt 2 ]) || ([ $# -eq 1 ] && [ "$1" == "-h" -o "$1" == "--help" ]); then
   echo "build-image <root directory> <dev lang>"
   echo " root directory: project의 최상위 디렉토리. '.'은 현재 디렉토리 의미함. "
   echo " dev lang: 개발 언어 (java, react, nodejs)"
