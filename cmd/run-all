@@ -61,7 +61,9 @@ else
 fi 
 
 # build & push
-${CTRLDIR}/cmd/build-image ${username} ${password} ${basedir} ${devlang}
+${CTRLDIR}/cmd/build-image ${basedir} ${devlang}
+if [ $? -eq 1 ]; then exit 1; fi
+${CTRLDIR}/cmd/push-image ${username} ${password} ${basedir}
 if [ $? -eq 1 ]; then exit 1; fi
 
 # deploy

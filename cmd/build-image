@@ -17,27 +17,22 @@ if [ "" == "${CTRLDIR}" ]; then
 fi
 
 echo ""
-echo "************* RUN BUILD&PUSH Container image *****************"
+echo "************* RUN BUILD Container image *****************"
 echo ""
 echo "STEP1: Get Parameters"
 
 # get parameters
 if ([ $# -lt 4 ]) || ([ $# -eq 1 ] && [ "$1" == "-h" -o "$1" == "--help" ]); then
-  echo "build-image <reg username> <reg password> <root directory> <dev lang>"
-  echo " reg username: container image registry username "
-  echo " reg password: container image registry password "
+  echo "build-image <root directory> <dev lang>"
   echo " root directory: project의 최상위 디렉토리. '.'은 현재 디렉토리 의미함. "
   echo " dev lang: 개발 언어 (java, react, nodejs)"
-  echo " config server: config server ingress name "
-  echo " ex) ./build-image user1 password1 ~/work java"
-  echo " ex) ./build-image user1 password1 . react"
+  echo " ex) ./build-image ~/work java"
+  echo " ex) ./build-image . react"
   exit 1
 fi
 
-username=$1
-password=$2
-basedir=$3
-devlang=$4
+basedir=$1
+devlang=$2
 echo ""
 
 # if the lang is java, do maven build. 
@@ -116,26 +111,8 @@ if [ $? -eq 1 ]; then
   exit 1
 fi
 
-# login image registry to push image: parameters are provided from bamboo pipeline.
-echo "STEP5. Login & Push image "
-docker login ${image_registry} -u  ${username} -p ${password}
-if [ $? == 1 ]; then
-  echo "****** FAIL to login image registry: username is $1"
-  exit 1
-fi
-
-# clone image as 'latest'
-echo "*** RUN -> docker tag ${image_registry}/${image_project}/${image_repository}:${image_tag} ${image_registry}/${image_project}/${image_repository}:latest"
-docker tag ${image_registry}/${image_project}/${image_repository}:${image_tag} ${image_registry}/${image_project}/${image_repository}:latest
-
-# push them
-echo "*** RUN -> docker push ${image_registry}/${image_project}/${image_repository}:${image_tag}"
-docker push ${image_registry}/${image_project}/${image_repository}:${image_tag}
-echo "*** RUN -> docker push ${image_registry}/${image_project}/${image_repository}:latest"
-docker push ${image_registry}/${image_project}/${image_repository}:latest
-
 echo ""
-echo "************* END BUILD&PUSH Container image *****************"
+echo "************* END BUILD Container image *****************"
 echo ""
 exit 0
 
