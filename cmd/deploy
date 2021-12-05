@@ -1,9 +1,9 @@
 #!/bin/bash
 
 if [ "" == "${WORKDIR}" ]; then
-  CTRLDIR=${WORKDIR}/run-cicd
-else
   CTRLDIR=~/run-cicd
+else
+  CTRLDIR=${WORKDIR}/run-cicd
 fi
 
 echo ""
