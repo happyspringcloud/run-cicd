@@ -78,7 +78,7 @@ if [ ! -d "${basedir}/deploy" ]; then
 fi
 
 if [ "${context}" == "." ]; then
-    context=`kubectl config current-context`
+    context=`kubectl config current-context 2>/dev/null`
 fi
 
 # get namespace
@@ -131,9 +131,10 @@ fi
 
 # switch kubenetes context
 echo "STEP3. Switch to kubernetes context "
-
-kubectl config use-context ${context}
-echo ""
+if [ "" != "${context}" ]; then
+  kubectl config use-context ${context}
+  echo ""
+fi
 
 # check current version
 echo "STEP4. Delete application if same version exists "
