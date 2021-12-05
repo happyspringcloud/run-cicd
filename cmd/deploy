@@ -1,9 +1,19 @@
 #!/bin/bash
 
 if [ "" == "${WORKDIR}" ]; then
-  CTRLDIR=~/run-cicd
+  if [ -d "~/run-cicid" ]; then
+    CTRLDIR=~/run-cicd
+  elif [ -d "./run-cicd" ]; then
+    CTRLDIR=./run-cicd
+  else
+    CTRLDIR=""
+  fi
 else
   CTRLDIR=${WORKDIR}/run-cicd
+fi
+if [ "" == "${CTRLDIR}" ]; then
+  echo "Can't find CI/CD resources !"
+  exit 1
 fi
 
 echo ""
