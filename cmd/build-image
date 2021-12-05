@@ -35,12 +35,6 @@ basedir=$1
 devlang=$2
 echo ""
 
-# if the lang is java, do maven build. 
-if [ "${devlang}" == "java" ]; then
-  echo "*** RUN -> mvn clean package -DskipTests -f ${basedir}"
-  mvn clean package -DskipTests -f ${basedir}  
-fi
-
 # if the lang is react, do copy config file if not exists.  
 if ([ "${devlang}" == "react" ]) && ! ([ -f ${basedir}/default.conf.template  ]) ; then
   cp ${CTRLDIR}/dockerfile/default.conf.template ${basedir} 

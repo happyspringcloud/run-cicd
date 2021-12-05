@@ -60,6 +60,12 @@ else
   if [ $? -eq 1 ]; then exit 1; fi
 fi 
 
+# if the lang is java, do maven build. 
+if [ "${devlang}" == "java" ]; then
+  echo "*** RUN -> mvn clean package -DskipTests -f ${basedir}"
+  mvn clean package -DskipTests -f ${basedir}  
+fi
+
 # build & push
 ${CTRLDIR}/cmd/build-image ${basedir} ${devlang}
 if [ $? -eq 1 ]; then exit 1; fi
