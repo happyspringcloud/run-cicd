@@ -1,4 +1,5 @@
-FROM node:carbon
+#FROM node:carbon
+FROM {{ BASE_IMAGE }}
 
 ARG MAIN_APP
 ENV APPNAME ${MAIN_APP}

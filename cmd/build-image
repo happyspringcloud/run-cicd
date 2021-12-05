@@ -55,13 +55,22 @@ echo ""
 echo "STEP3. Generate Dockerfile "
 
 dockerfile_name=""
-
+container_base_image="${base_image}"
 if [ "${devlang}" == "java" ]; then
   dockerfile_name=Dockerfile4java
+  if [ "" == "${container_base_image}" ]; then
+    container_base_image=openjdk:8-jre-slim
+  fi
 elif [ "${devlang}" == "nodejs" ]; then
   dockerfile_name=Dockerfile4nodejs
+  if [ "" == "${container_base_image}" ]; then
+    container_base_image=node:carbon
+  fi
 elif [ "${devlang}" == "react" ]; then
   dockerfile_name=Dockerfile4react
+  if [ "" == "${container_base_image}" ]; then
+    container_base_image=node:slim
+  fi
 else
   echo "NOT Supported Language!"
   exit 1
@@ -70,6 +79,9 @@ fi
 # build image
 echo "STEP4. Build image "
 echo "image: ${image_registry}/${image_project}/${image_repository}:${image_tag}"
+
+sed "s@{{ BASE_IMAGE }}@${container_base_image}@g" ${CTRLDIR}/dockerfile/${dockerfile_name > tmp && mv tmp ${CTRLDIR}/dockerfile/${dockerfile_name  # change base image
+
 if [ "${devlang}" == "java" ]; then
   echo "*** RUN -> docker build --build-arg ARTIFACTORY_FILE=${image_repository}.jar -f ${CTRLDIR}/dockerfile/${dockerfile_name} -t ${image_registry}/${image_project}/${image_repository}:${image_tag} ${basedir}"
   docker build --build-arg ARTIFACTORY_FILE=${image_repository}.jar -f ${CTRLDIR}/dockerfile/${dockerfile_name} -t ${image_registry}/${image_project}/${image_repository}:${image_tag} ${basedir}
