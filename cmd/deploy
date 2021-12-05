@@ -33,7 +33,7 @@ fi
 
 ######## functions ############
 RETURN=""
-function generate-cm() {
+function generate_cm() {
     RETURN="OK"
     if [ -f ${filepath} ]; then
         kubectl get configmap ${cm} -n ${ns} 2> /dev/null
@@ -49,7 +49,7 @@ function generate-cm() {
     fi
 }
 
-function generate-secret() {
+function generate_secret() {
     RETURN="OK"
     if [ -f ${filepath} ]; then
         kubectl get secret ${secret} -n ${ns} 2> /dev/null
@@ -181,7 +181,7 @@ if [ -f ${basedir}/cicd/cm-${profile}.env ]; then
 fi
 sort -u ${tmp} > ${filepath}
 
-generate-cm
+generate_cm
 if [ "${RESULT}" == "NK" ]; then exit 1; fi
 
 echo ""
@@ -210,7 +210,7 @@ if [ -f ${basedir}/cicd/secret-${profile}.env ]; then
 fi
 sort -u ${tmp} > ${filepath}
 
-generate-secret
+generate_secret
 if [ "${RESULT}" == "NK" ]; then exit 1; fi
 
 echo "" 
