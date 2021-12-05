@@ -1,5 +1,11 @@
 #!/bin/bash
-CTRLDIR=~/run-cicd
+
+if [ "" == "${WORKDIR}" ]; then
+  CTRLDIR=${WORKDIR}/run-cicd
+else
+  CTRLDIR=~/run-cicd
+fi
+
 echo "************** RUN ALL ***************"
 echo ""
 

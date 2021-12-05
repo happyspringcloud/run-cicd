@@ -1,6 +1,10 @@
 #!/bin/bash
 
-CTRLDIR=~/run-cicd
+if [ "" == "${WORKDIR}" ]; then
+  CTRLDIR=${WORKDIR}/run-cicd
+else
+  CTRLDIR=~/run-cicd
+fi
 
 echo ""
 echo "************** RUN READ CONFIG ***************"
