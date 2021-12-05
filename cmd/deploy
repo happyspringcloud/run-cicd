@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "" == "${WORKDIR}" ]; then
   if [ -d "~/run-cicid" ]; then
@@ -71,6 +71,11 @@ echo "STEP1: Get Parameters"
 context=$1
 profile=$2
 basedir=$3
+
+# create deploy dir if not exists
+if [ ! -d "${basedir}/deploy" ]; then
+  mkdir "${basedir}/deploy"
+fi
 
 if [ "${context}" == "." ]; then
     context=`kubectl config current-context`

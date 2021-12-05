@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "" == "${WORKDIR}" ]; then
   if [ -d "~/run-cicid" ]; then 
