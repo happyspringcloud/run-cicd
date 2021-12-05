@@ -1,8 +1,8 @@
 #!/bin/sh
 
 if [ "" == "${WORKDIR}" ]; then
-  if [ -d "~/run-cicd" ]; then
-    CTRLDIR=~/run-cicd
+  if [ -d "${HOME}/run-cicd" ]; then
+    CTRLDIR=${HOME}/run-cicd
   elif [ -d "./run-cicd" ]; then
     CTRLDIR=./run-cicd
   else
