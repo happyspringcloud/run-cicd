@@ -19,7 +19,7 @@ podTemplate(
         def workDir = "${env.WORKSPACE}"
         
 		stage("Get Source") {
-            git url: "https://github.com/sc-ondal/config.git", branch: "main", credentialsId: "credential_github"
+            git url: "${git_url}", branch: "${git_branch}", credentialsId: "${git_credential}"
         } 
 
 		//-- 환경변수 파일 읽어서 변수값 셋팅 
