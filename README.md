@@ -38,10 +38,12 @@ kubectl create secret docker-registry myharbor.io --docker-server=myharbor.io --
 ```
 $ run-cicd
 ```
-TIP) You can also run it using parameters
+TIP) You can also run it using parameters   
+If you don't use Spring Cloud Config server, you must skip last parameter.   
 ```
-run-cicd {id for image registry} {password for image registry} . {profile} . {language} {config server ingress name} 
-ex) run-cicd hklee passw0rd . dev . java config 
+run-cicd {id for image registry} {password for image registry} . {profile} . {language} [{config server ingress name}]
+ex1) run-cicd hklee passw0rd . dev . java 
+ex2) run-cicd hklee passw0rd . dev . java config 
 ```
 
 ## for Mac user
