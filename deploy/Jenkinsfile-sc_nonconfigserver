@@ -19,15 +19,16 @@ podTemplate(
         def workDir = "${env.WORKSPACE}"
         
 		stage("Get Source") {
+			//git info(Define on General Tab)
             git url: "${git_url}", branch: "${git_branch}", credentialsId: "${git_credential}"
         } 
 
 		//-- 환경변수 파일 읽어서 변수값 셋팅 
 		def props = readProperties  file:"cicd/cicd-common.properties"
-		def tag = props["image_tag"]
 		def imageRegistry = props["image_registry"]
 		def imageRegistryHost = "https://${imageRegistry}"
         def imageRepository = props["image_repository"]
+		def imageTag = props["image_tag"]
 		def imageCredential="credential_harbor"
 		def image = "${imageRegistry}/"+props["image_project"]+"/${imageRepository}"
 		
@@ -65,8 +66,8 @@ podTemplate(
                     sh "${cicdResourceHome}/cmd/build-image . java"
                     
 					docker.withRegistry("${imageRegistryHost}", "${imageCredential}") {
-                        sh "docker push ${image}:${tag}"
-						sh "docker tag ${image}:${tag} ${image}:latest"
+                        sh "docker push ${image}:${imageTag}"
+						sh "docker tag ${image}:${imageTag} ${image}:latest"
 						sh "docker push ${image}:latest"
 					}
 				}
