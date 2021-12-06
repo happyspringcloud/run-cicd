@@ -1,0 +1,88 @@
+def label = "${JOB_NAME}.${UUID.randomUUID().toString()}"
+podTemplate(
+	label: label, 
+	containers: [
+		//container image는 docker search 명령 이용
+        containerTemplate(name: "maven", image: "maven", ttyEnabled: true, command: "cat"), 
+		containerTemplate(name: "docker", image: "docker", ttyEnabled: true, command: "cat"),
+		containerTemplate(name: "kubectl", image: "lachlanevenson/k8s-kubectl", command: "cat", ttyEnabled: true)
+	],
+	//volume mount
+	volumes: [
+		hostPathVolume(hostPath: "/var/run/docker.sock", mountPath: "/var/run/docker.sock"),
+        hostPathVolume(hostPath: "/root/.m2", mountPath: "/root/.m2")
+        //nfsVolume(serverAddress: "169.56.77.150", serverPath: "/root/.m2", mountPath: "", readOnly: false)
+	]
+) 
+{
+	node(label) {
+        def workDir = "${env.WORKSPACE}"
+        
+		stage("Get Source") {
+            git url: "https://github.com/sc-ondal/config.git", branch: "main", credentialsId: "credential_github"
+        } 
+
+		//-- 환경변수 파일 읽어서 변수값 셋팅 
+		def props = readProperties  file:"cicd/cicd-common.properties"
+		def tag = props["image_tag"]
+		def imageRegistry = props["image_registry"]
+		def imageRegistryHost = "https://${imageRegistry}"
+        def imageRepository = props["image_repository"]
+		def imageCredential="credential_harbor"
+		def image = "${imageRegistry}/"+props["image_project"]+"/${imageRepository}"
+		
+        def cicdResourceHome = "${workDir}/run-cicd"
+        def profile = "${deploy_profile}" //Deploy Target Server profile(Define on General Tab)
+        if ( "" == "${profile}") {
+            profile = "dev"
+        }
+        
+        echo "***** DEPLOY PROFILE: ${profile} *****"
+        
+        String stageName = ""
+        
+		try {
+        
+            stageName = "Get CI/CD resources"
+            stage(stageName) {
+                echo "##### "+stageName+" #####"
+                sh "git clone https://github.com/happyspringcloud/run-cicd.git"
+            }
+
+            stageName="Build Execute file"
+            stage(stageName) {
+                echo "##### "+stageName+" #####"
+				container("maven") {
+                    sh "mvn clean package -DskipTests"
+                }
+            }
+            
+            stageName="Build Container image"
+            stage(stageName) {
+                echo "##### "+stageName+" #####"
+				container("docker") {
+                    
+                    sh "${cicdResourceHome}/cmd/build-image . java"
+                    
+					docker.withRegistry("${imageRegistryHost}", "${imageCredential}") {
+                        sh "docker push ${image}:${tag}"
+						sh "docker tag ${image}:${tag} ${image}:latest"
+						sh "docker push ${image}:latest"
+					}
+				}
+			}
+            
+            stageName="Deploy to Cluster"
+			stage(stageName) {
+                echo "##### "+stageName+" #####"
+                container("kubectl") {
+                    //run deploy shell: deploy <k8s context> <target server profile> <work dir>
+                    sh "${cicdResourceHome}/cmd/deploy . ${profile} . "
+				}
+			}
+			currentBuild.result = "SUCCESS"
+		} catch(e) {
+			currentBuild.result = "FAIL"
+		}
+	}
+}
