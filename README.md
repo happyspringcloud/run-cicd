@@ -30,9 +30,10 @@ $ cd webhook/
 - Check you've created image pull secret
 You MUST create image pull secret for image registry to pull container image  
 For example, If your image registry is 'myharbor.io', Make secret as followed.   
-   
+``` 
 kubectl create secret docker-registry myharbor.io --docker-server=myharbor.io --docker-username={username} --docker-password={password} -n {namespace}    
-
+```
+   
 - run cicd
 ```
 $ run-cicd
