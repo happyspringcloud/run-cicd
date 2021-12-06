@@ -53,6 +53,8 @@ spec:
           {{ DEFINE_READINESS_TIMEOUT_SECONDS }}
           {{ DEFINE_READINESS_SUCCESS_THRESHOLD }}
           {{ DEFINE_READINESS_FAILURE_THRESHOLD }
+      imagePullSecrets:
+      - name: {{ IMAGE_PULL_SECRET_NAME }}
 ---
 apiVersion: v1
 kind: Service

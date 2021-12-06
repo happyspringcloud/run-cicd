@@ -258,6 +258,9 @@ sed "s@{{ REQ_MEM }}@${req_mem}@g" ${yaml} > ${tmp} && mv ${tmp} ${yaml}
 sed "s@{{ LIMIT_CPU }}@${limit_cpu}@g" ${yaml} > ${tmp} && mv ${tmp} ${yaml}
 sed "s@{{ LIMIT_MEM }}@${limit_mem}@g" ${yaml} > ${tmp} && mv ${tmp} ${yaml}
 
+# Set imagePullSecret name
+sed "s@{{ IMAGE_PULL_SECRET_NAME }}@${image_registry}@g" ${yaml} > ${tmp} && mv ${tmp} ${yaml}
+
 # Get readiness values
 if ([ "${readiness_enabled}" == "" ]) || ([ "${readiness_enabled}" == "false" ]); then 
   sed "s@{{ DEFINE_READINESS }}@@g" ${yaml} > ${tmp} && mv ${tmp} ${yaml}
