@@ -130,6 +130,7 @@ if [ "" == "${imagePullSecret}" ]; then
   echo "Refer https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/"
   exit 1
 fi 
+echo "FIND image pull secret => ${image_registry}"
 
 # Get Workload kind 
 if [ "${workload_kind}" == "" ]; then
