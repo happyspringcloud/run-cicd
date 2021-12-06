@@ -34,6 +34,8 @@ podTemplate(
 		
         def cicdResourceHome = "${workDir}/run-cicd"
         def profile = "${deploy_profile}" //Deploy Target Server profile(Define on General Tab)
+		def skipStages = "${skip_stages}" //Skip stage names (Define on General Tab)
+
         if ( "" == "${profile}") {
             profile = "dev"
         }
@@ -50,35 +52,46 @@ podTemplate(
                 sh "git clone https://github.com/happyspringcloud/run-cicd.git"
             }
 
-            stageName="Build Execute file"
+            stageName="Build jar"
             stage(stageName) {
                 echo "##### "+stageName+" #####"
-				container("maven") {
-                    sh "mvn clean package -DskipTests"
-                }
+				if("${skipStages}".contains(stageName)) {
+                	echo "Skipped: " + stageName
+            	} else {
+					container("maven") {
+                    	sh "mvn clean package -DskipTests"
+                	}
+				}
             }
             
-            stageName="Build Container image"
+            stageName="Build image"
             stage(stageName) {
                 echo "##### "+stageName+" #####"
-				container("docker") {
-                    
-                    sh "${cicdResourceHome}/cmd/build-image . java"
-                    
-					docker.withRegistry("${imageRegistryHost}", "${imageCredential}") {
-                        sh "docker push ${image}:${imageTag}"
-						sh "docker tag ${image}:${imageTag} ${image}:latest"
-						sh "docker push ${image}:latest"
+				if("${skipStages}".contains(stageName)) {
+                	echo "Skipped: " + stageName
+            	} else {
+					container("docker") {
+						sh "${cicdResourceHome}/cmd/build-image . java"
+						
+						docker.withRegistry("${imageRegistryHost}", "${imageCredential}") {
+							sh "docker push ${image}:${imageTag}"
+							sh "docker tag ${image}:${imageTag} ${image}:latest"
+							sh "docker push ${image}:latest"
+						}
 					}
-				}
+				}				
 			}
             
-            stageName="Deploy to Cluster"
+            stageName="Deploy"
 			stage(stageName) {
                 echo "##### "+stageName+" #####"
-                container("kubectl") {
-                    //run deploy shell: deploy <k8s context> <target server profile> <work dir>
-                    sh "${cicdResourceHome}/cmd/deploy . ${profile} . "
+				if("${skipStages}".contains(stageName)) {
+                	echo "Skipped: " + stageName
+            	} else {				
+					container("kubectl") {
+						//run deploy shell: deploy <k8s context> <target server profile> <work dir>
+						sh "${cicdResourceHome}/cmd/deploy . ${profile} . "
+					}
 				}
 			}
 			currentBuild.result = "SUCCESS"
