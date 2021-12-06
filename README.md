@@ -21,7 +21,7 @@ $ sudo ln -s ~/run-cicd/cmd/run-cicd /usr/local/bin/run-cicd
 
 ## How to run
 - Move to working directory
-- clone your project(아럐 예는 webhook) to deploy and Move to project root 
+- clone your project(아래 예는 webhook) to deploy and Move to project root 
 ```
 $ cd ~/work
 $ git clone https://github.com/sc-hklee/webhook.git
@@ -30,6 +30,7 @@ $ cd webhook/
 - Check you've created image pull secret
 You MUST create image pull secret for image registry to pull container image  
 For example, If your image registry is 'myharbor.io', Make secret as followed.   
+   
 kubectl create secret docker-registry myharbor.io --docker-server=myharbor.io --docker-username={username} --docker-password={password} -n {namespace}    
 
 - run cicd
