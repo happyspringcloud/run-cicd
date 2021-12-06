@@ -122,6 +122,15 @@ else
   fi
 fi
 
+# check imagePull Secret 
+imagePullSecret=`kubectl get secret ${image_registry} -n ${ns} 2>/dev/null`
+if [ "" == "${imagePullSecret}" ]; then 
+  echo "##### You MUST create image pull secret to pull image #####"
+  echo "- make it name as ${image_registry}"
+  echo "Refer https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/"
+  exit 1
+fi 
+
 # Get Workload kind 
 if [ "${workload_kind}" == "" ]; then
   deploy_kind="StatefulSet"
