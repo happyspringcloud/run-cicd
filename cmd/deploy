@@ -126,7 +126,8 @@ fi
 imagePullSecret=`kubectl get secret ${image_registry} -n ${ns} 2>/dev/null`
 if [ "" == "${imagePullSecret}" ]; then 
   echo "##### You MUST create image pull secret to pull image #####"
-  echo "- make it name as ${image_registry}"
+  echo "# make it name as ${image_registry} as followed."
+  echo "kubectl create secret docker-registry ${image_registry} --docker-server=${image_registry} --docker-username={username} --docker-password={password} -n ${ns}"
   echo "Refer https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/"
   exit 1
 fi 
