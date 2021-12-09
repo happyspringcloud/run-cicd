@@ -163,7 +163,7 @@ echo "deploy kind: ${deploy_kind}, version: ${CURTAG} -> ${image_tag}"
 if [ $? -eq 0 ] && [ "${CURTAG}" == "${image_tag}" ]; then
     echo "[${image_repository}] Same version(${image_tag}) service exists!"
 
-    kubectl delete ${deploy_kind} --selector="app=${image_repository} -n ${ns}"
+    kubectl delete ${deploy_kind} --selector="app=${image_repository}" -n ${ns}
 fi
 echo ""
 
