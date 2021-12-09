@@ -189,10 +189,13 @@ cat ${basedir}/deploy/cicd.properties >> ${tmp}
 
 # project폴더의 cm-common.env, cm-{profile}.env파일 내용을 추가
 if [ -f ${basedir}/cicd/cm-common.env ]; then
+  echo "" >> ${tmp}
   cat ${basedir}/cicd/cm-common.env >> ${tmp}
   echo "" >> ${tmp}
 fi
+
 if [ -f ${basedir}/cicd/cm-${profile}.env ]; then
+  echo "" >> ${tmp}
   cat ${basedir}/cicd/cm-${profile}.env >> ${tmp}
   echo "" >> ${tmp}
 fi
@@ -218,10 +221,12 @@ if [ -f ${basedir}/deploy/secret.properties ]; then
 fi
 # project폴더의 secret-common.env, secret-{profile}.env파일 내용을 추가
 if [ -f ${basedir}/cicd/secret-common.env ]; then
+  echo "" >> ${tmp}
   cat ${basedir}/cicd/secret-common.env >> ${tmp}
   echo "" >> ${tmp}
 fi
 if [ -f ${basedir}/cicd/secret-${profile}.env ]; then
+  echo "" >> ${tmp}
   cat ${basedir}/cicd/secret-${profile}.env >> ${tmp}
   echo "" >> ${tmp}
 fi
