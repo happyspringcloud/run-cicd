@@ -1,0 +1,26 @@
+#!/bin/sh
+
+if ([ $# -lt 2 ]) || ([ $# -eq 1 ] && [ "$1" == "-h" -o "$1" == "--help" ]); then
+  echo "shebang <source shell type> <target shell type>"
+  echo " shell type is one of sh or bash  "
+  echo " ex) ./shebang sh bash"
+  echo " ex) ./shebang bash sh"
+  exit 1
+fi
+
+shells=`ls ~/run-cicd/cmd`
+lists=`echo ${shells} | sed "s/,/ /g"`
+
+src=$1
+target=$2
+
+for shell in ${lists}
+do
+  echo "shell ->  ${shell}"
+
+  sed "s@#!/bin/${src}@#!/bin/${target}@g" ${shell}> tmp && mv tmp ${shell} && chmod +x ${shell}
+
+done
+
+exit 0
+
