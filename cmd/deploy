@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ "" == "${WORKDIR}" ]; then
   if [ -d "${HOME}/run-cicd" ]; then

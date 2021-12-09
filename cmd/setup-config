@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "##### START of Setup kubeconfig! #####"
 CLUSTER=`kubectl config view --minify -o jsonpath='{.clusters[].name}'`
