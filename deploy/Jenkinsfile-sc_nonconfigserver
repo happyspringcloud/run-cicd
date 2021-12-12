@@ -73,6 +73,7 @@ podTemplate(
 					container("docker") {
 						sh "${cicdResourceHome}/cmd/build-image . java"
 						
+						echo "Push image to ${imageRegistryHost} with credential ${imageCredential}"
 						docker.withRegistry("${imageRegistryHost}", "${imageCredential}") {
 							sh "docker push ${image}:${imageTag}"
 							sh "docker tag ${image}:${imageTag} ${image}:latest"
