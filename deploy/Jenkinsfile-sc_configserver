@@ -62,10 +62,10 @@ podTemplate(
 			stage(stageName) {
 				echo "##### "+stageName+" #####"
 				
-				# read only cicd related configuration
+				// read only cicd related configuration
 				sh "${cicdResourceHome}/cmd/read-config ${profile} . cicd ${configServer}"
 
-				# read configuration
+				// read configuration
 				sh "${cicdResourceHome}/cmd/read-config ${profile} . cm,secret ${configServer}"
 			}
 
