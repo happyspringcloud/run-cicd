@@ -36,7 +36,7 @@ podTemplate(
         def profile = "${deploy_profile}" //Deploy Target Server profile(Define on General Tab)
 		def skipStages = "${skip_stages}" //Skip stage names (Define on General Tab)
 		
-		# config server ingress name 
+		// config server ingress name 
 		def configServer = "${config_server}" //Define on General Tab
 
         if ( "" == "${profile}") {
