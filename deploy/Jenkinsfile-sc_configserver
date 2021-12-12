@@ -1,0 +1,119 @@
+def label = "${JOB_NAME}.${UUID.randomUUID().toString()}"
+podTemplate(
+	label: label, 
+	containers: [
+		//container image는 docker search 명령 이용
+        containerTemplate(name: "maven", image: "maven", ttyEnabled: true, command: "cat"), 
+		containerTemplate(name: "docker", image: "docker", ttyEnabled: true, command: "cat"),
+		containerTemplate(name: "kubectl", image: "lachlanevenson/k8s-kubectl", ttyEnabled: true, command: "cat")
+	],
+	//volume mount
+	volumes: [
+		hostPathVolume(hostPath: "/var/run/docker.sock", mountPath: "/var/run/docker.sock"),
+        hostPathVolume(hostPath: "/root/.m2", mountPath: "/root/.m2")
+        //nfsVolume(serverAddress: "169.56.77.150", serverPath: "/root/.m2", mountPath: "", readOnly: false)
+	]
+) 
+{
+	node(label) {
+        def workDir = "${env.WORKSPACE}"
+        
+		stage("Get Source") {
+			//git info(Define on General Tab)
+            git url: "${git_url}", branch: "${git_branch}", credentialsId: "${git_credential}"
+        } 
+
+		//-- 환경변수 파일 읽어서 변수값 셋팅 
+		def props = readProperties  file:"cicd/cicd-common.properties"
+		def imageRegistry = props["image_registry"]
+		def imageRegistryHost = "https://${imageRegistry}"
+        def imageRepository = props["image_repository"]
+		def imageTag = props["image_tag"]
+		def imageCredential="credential_harbor"
+		def image = "${imageRegistry}/"+props["image_project"]+"/${imageRepository}"
+		
+        def cicdResourceHome = "${workDir}/run-cicd"
+        def profile = "${deploy_profile}" //Deploy Target Server profile(Define on General Tab)
+		def skipStages = "${skip_stages}" //Skip stage names (Define on General Tab)
+		
+		# config server ingress name 
+		def configServer = "${config_server}" //Define on General Tab
+
+        if ( "" == "${profile}") {
+            profile = "dev"
+        }
+        if ( "" == "${configServer}") {
+            configServer = "config"
+        }
+
+        echo "***** DEPLOY PROFILE: ${profile} *****"
+        
+        String stageName = ""
+        
+		try {
+        
+            stageName = "Get CI/CD resources"
+            stage(stageName) {
+                echo "##### "+stageName+" #####"
+                sh "git clone https://github.com/happyspringcloud/run-cicd.git"
+            }
+
+			stageName = "Read config"
+			stage(stageName) {
+				echo "##### "+stageName+" #####"
+				
+				# read only cicd related configuration
+				sh "${cicdResourceHome}/cmd/read-config ${profile} . cicd ${configServer}"
+
+				# read configuration
+				sh "${cicdResourceHome}/cmd/read-config ${profile} . cm,secret ${configServer}"
+			}
+
+            stageName="Build jar"
+            stage(stageName) {
+                echo "##### "+stageName+" #####"
+				if("${skipStages}".contains(stageName)) {
+                	echo "Skipped: " + stageName
+            	} else {
+					container("maven") {
+                    	sh "mvn clean package -DskipTests"
+                	}
+				}
+            }
+            
+            stageName="Build image"
+            stage(stageName) {
+                echo "##### "+stageName+" #####"
+				if("${skipStages}".contains(stageName)) {
+                	echo "Skipped: " + stageName
+            	} else {
+					container("docker") {
+						sh "${cicdResourceHome}/cmd/build-image . java"
+						
+						docker.withRegistry("${imageRegistryHost}", "${imageCredential}") {
+							sh "docker push ${image}:${imageTag}"
+							sh "docker tag ${image}:${imageTag} ${image}:latest"
+							sh "docker push ${image}:latest"
+						}
+					}
+				}				
+			}
+            
+            stageName="Deploy"
+			stage(stageName) {
+                echo "##### "+stageName+" #####"
+				if("${skipStages}".contains(stageName)) {
+                	echo "Skipped: " + stageName
+            	} else {				
+					container("kubectl") {
+						//run deploy shell: deploy <k8s context> <target server profile> <work dir>
+						sh "${cicdResourceHome}/cmd/deploy . ${profile} . "
+					}
+				}
+			}
+			currentBuild.result = "SUCCESS"
+		} catch(e) {
+			currentBuild.result = "FAIL"
+		}
+	}
+}
