@@ -41,17 +41,21 @@ $ run-cicd
 TIP) You can also run it using parameters   
 If you don't use Spring Cloud Config server, you must skip last parameter.   
 ```
-run-cicd {id for image registry} {password for image registry} . {profile} . {language} [{config server ingress name}]
+run-cicd {id for image registry} {password for image registry} . {profile} . {language} [{config server ingress host}]
 ex1) run-cicd hklee passw0rd . dev . java 
-ex2) run-cicd hklee passw0rd . dev . java config 
+ex2) run-cicd hklee passw0rd . dev . java config.169.56.70.nip.io
 ```
 
 ## for Mac user
-Replace jq with jq-mac
+install jq-mac
 ```
-$ cd ~/run-cicd/cmd
-$ rm jq
-$ cp jq-mac jq
+❯ cd ~/run-cicd/cmd
+❯ ll
+...
+-rwxr-xr-x  1 happycloudpak  staff   257K  1 15 13:18 jq-mac
+...
+❯ cp jq-mac /usr/local/bin/jq
+❯ install /usr/local/bin/jq ~/run-cicd/cmd/jq
 ```
 
 
