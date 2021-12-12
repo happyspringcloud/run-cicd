@@ -57,7 +57,7 @@ function mkFile() {
 
   len=`${CTRLDIR}/cmd/jq '.propertySources | length' ${fp}/${fn}`
   switch=on
-  i=0; while [ "$i" -lt "$len" ];
+  i=0; while [ "$i" -lt "$len" ]
   do
     switch=off
     nm=`${CTRLDIR}/cmd/jq ".propertySources[$i].name" ${fp}/${fn}`
@@ -89,7 +89,7 @@ function mkFile() {
       if [ $? -eq 0 ]; then
         len2=`${CTRLDIR}/cmd/jq "keys | length" ${fp}/$i-${fn}`
 
-	j=0; while [ "$j" -lt "$len2" ]
+	      j=0; while [ "$j" -lt "$len2" ]
         do
             key=`${CTRLDIR}/cmd/jq -r "keys[$j]" ${fp}/$i-${fn}`
             val=`${CTRLDIR}/cmd/jq -r ".[\"$key\"]" ${fp}/$i-${fn}`
@@ -102,26 +102,13 @@ function mkFile() {
   done
 }
 
-# set download url 환경변수
-INGRESS_CONFIG_SERVER=${configserver}
-
-
-# get config-server ingress host
-echo "STEP2. Get config server ingress host "
-host=`kubectl get ing ${INGRESS_CONFIG_SERVER} -o yaml | grep host: | cut -d ":" -f 2 | tr -d " "`
-if [ "${host}" == "" ]; then
-  echo "CAN't get config server ingress address"
-  exit 1
-fi
-
-url=""
-fn=""
-uri="http://${host}/${appname}"
-
 # generage file depends on config kind
-echo "STEP3. Generate config file "
+echo "STEP2. Generate config file "
 
 mkdir -p ${basedir}/deploy 2>/dev/null
+
+# set download url 환경변수
+uri="http://${configserver}/${appname}"
 
 # check jq available
 jqver=`jq -V`
