@@ -55,11 +55,9 @@ function mkFile() {
     return 1
   fi
 
-  i=0
-  j=0
   len=`${CTRLDIR}/cmd/jq '.propertySources | length' ${fp}/${fn}`
   switch=on
-  for ((i=0;i<$len;i++));
+  i=0; while [ "$i" -lt "$len" ];
   do
     switch=off
     nm=`${CTRLDIR}/cmd/jq ".propertySources[$i].name" ${fp}/${fn}`
@@ -84,21 +82,23 @@ function mkFile() {
 
     if [ "${switch}" == "off" ]; then
       echo ""
-    else 
+    else
       #echo "$i => $nm"
 
       chk=`${CTRLDIR}/cmd/jq ".propertySources[$i].source" ${fp}/${fn} > ${fp}/$i-${fn}`
       if [ $? -eq 0 ]; then
         len2=`${CTRLDIR}/cmd/jq "keys | length" ${fp}/$i-${fn}`
 
-        for ((j=0;j<$len2;j++))
-          do
+	j=0; while [ "$j" -lt "$len2" ]
+        do
             key=`${CTRLDIR}/cmd/jq -r "keys[$j]" ${fp}/$i-${fn}`
             val=`${CTRLDIR}/cmd/jq -r ".[\"$key\"]" ${fp}/$i-${fn}`
             echo "$key=$val" >> ${ofn}
-          done
+	    j=$((j + 1))
+        done
       fi
     fi
+    i=$((i + 1))
   done
 }
 
@@ -118,8 +118,12 @@ url=""
 fn=""
 uri="http://${host}/${appname}"
 
+# generage file depends on config kind
+echo "STEP3. Generate config file "
+
+mkdir -p ${basedir}/deploy 2>/dev/null
+
 # check jq available
-echo "STEP3. Check jq is available "
 jqver=`jq -V`
 if [ "" == "${jqver}" ]; then
   echo "jq is not available ! it will install automatically."
@@ -136,11 +140,6 @@ else
   echo "${CTRLDIR}/cmd/jq is NOT exist !. we will make link file."
   install $(which jq) ${CTRLDIR}/cmd/jq
 fi
-
-# generage file depends on config kind
-echo "STEP4. Generate config file "
-
-mkdir -p ${basedir}/deploy 2>/dev/null 
 
 configs=`echo ${config_kinds} | sed "s/,/ /g"`
 
