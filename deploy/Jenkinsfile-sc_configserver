@@ -23,6 +23,13 @@ podTemplate(
         def profile = "${deploy_profile}" //Deploy Target Server profile(Define on General Tab)
 		def skipStages = "${skip_stages}" //Skip stage names (Define on General Tab)
 		def configServer = "${config_server}" //config server ingress name(Define on General Tab)
+		
+		def imageRegistry = ""
+		def imageRegistryHost = ""
+		def imageRepository = ""
+		def imageTag = ""
+		def image = ""
+
 
         if ( "" == "${profile}") {
             profile = "dev"
@@ -56,12 +63,12 @@ podTemplate(
 					sh "${cicdResourceHome}/cmd/read-config ${profile} . cicd ${configServer}"
 
 					//-- 환경변수 파일 읽어서 변수값 셋팅 
-					def props = readProperties  file:"./deploy/cicd.properties"
-					def imageRegistry = props["image_registry"]
-					def imageRegistryHost = "https://${imageRegistry}"
-					def imageRepository = props["image_repository"]
-					def imageTag = props["image_tag"]
-					def image = "${imageRegistry}/"+props["image_project"]+"/${imageRepository}"
+					props = readProperties  file:"./deploy/cicd.properties"
+					imageRegistry = props["image_registry"]
+					imageRegistryHost = "https://${imageRegistry}"
+					imageRepository = props["image_repository"]
+					imageTag = props["image_tag"]
+					image = "${imageRegistry}/"+props["image_project"]+"/${imageRepository}"
 
 					// read configuration
 					sh "${cicdResourceHome}/cmd/read-config ${profile} . cm,secret ${configServer}"
