@@ -61,12 +61,13 @@ podTemplate(
 			stageName = "Read config"
 			stage(stageName) {
 				echo "##### "+stageName+" #####"
-				
-				// read only cicd related configuration
-				sh "${cicdResourceHome}/cmd/read-config ${profile} . cicd ${configServer}"
+				container("kubectl") {
+					// read only cicd related configuration
+					sh "${cicdResourceHome}/cmd/read-config ${profile} . cicd ${configServer}"
 
-				// read configuration
-				sh "${cicdResourceHome}/cmd/read-config ${profile} . cm,secret ${configServer}"
+					// read configuration
+					sh "${cicdResourceHome}/cmd/read-config ${profile} . cm,secret ${configServer}"
+				}
 			}
 
             stageName="Build jar"
