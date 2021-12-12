@@ -118,8 +118,27 @@ url=""
 fn=""
 uri="http://${host}/${appname}"
 
+# check jq available
+echo "STEP3. Check jq is available "
+jqver=`jq -V`
+if [ "" == "${jqver}" ]; then
+  echo "jq is not available ! it will install automatically."
+  curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o /usr/local/bin/jq
+  chmod a+x /usr/local/bin/jq
+  echo "jq is installed !"
+else
+  echo "jq is available !"
+fi
+
+if [ -f "${CTRLDIR}/cmd/jq" ]; then
+  echo "${CTRLDIR}/cmd/jq exists !"
+else
+  echo "${CTRLDIR}/cmd/jq is NOT exist !. we will make link file."
+  install $(which jq) ${CTRLDIR}/cmd/jq
+fi
+
 # generage file depends on config kind
-echo "STEP3. Generate config file "
+echo "STEP4. Generate config file "
 
 mkdir -p ${basedir}/deploy 2>/dev/null 
 
