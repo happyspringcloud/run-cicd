@@ -16,28 +16,13 @@ podTemplate(
 ) 
 {
 	node(label) {
-        def workDir = "${env.WORKSPACE}"
-        
-		stage("Get Source") {
-			//git info(Define on General Tab)
-            git url: "${git_url}", branch: "${git_branch}", credentialsId: "${git_credential}"
-        } 
 
-		//-- 환경변수 파일 읽어서 변수값 셋팅 
-		def props = readProperties  file:"cicd/cicd-common.properties"
-		def imageRegistry = props["image_registry"]
-		def imageRegistryHost = "https://${imageRegistry}"
-        def imageRepository = props["image_repository"]
-		def imageTag = props["image_tag"]
+        def workDir = "${env.WORKSPACE}"
 		def imageCredential="credential_harbor"
-		def image = "${imageRegistry}/"+props["image_project"]+"/${imageRepository}"
-		
         def cicdResourceHome = "${workDir}/run-cicd"
         def profile = "${deploy_profile}" //Deploy Target Server profile(Define on General Tab)
 		def skipStages = "${skip_stages}" //Skip stage names (Define on General Tab)
-		
-		// config server ingress name 
-		def configServer = "${config_server}" //Define on General Tab
+		def configServer = "${config_server}" //config server ingress name(Define on General Tab)
 
         if ( "" == "${profile}") {
             profile = "dev"
@@ -45,6 +30,11 @@ podTemplate(
         if ( "" == "${configServer}") {
             configServer = "config"
         }
+        
+		stage("Get Source") {
+			//git info(Define on General Tab)
+            git url: "${git_url}", branch: "${git_branch}", credentialsId: "${git_credential}"
+        } 
 
         echo "***** DEPLOY PROFILE: ${profile} *****"
         
@@ -64,6 +54,14 @@ podTemplate(
 				container("kubectl") {
 					// read only cicd related configuration
 					sh "${cicdResourceHome}/cmd/read-config ${profile} . cicd ${configServer}"
+
+					//-- 환경변수 파일 읽어서 변수값 셋팅 
+					def props = readProperties  file:"./deploy/cicd.properties"
+					def imageRegistry = props["image_registry"]
+					def imageRegistryHost = "https://${imageRegistry}"
+					def imageRepository = props["image_repository"]
+					def imageTag = props["image_tag"]
+					def image = "${imageRegistry}/"+props["image_project"]+"/${imageRepository}"
 
 					// read configuration
 					sh "${cicdResourceHome}/cmd/read-config ${profile} . cm,secret ${configServer}"
