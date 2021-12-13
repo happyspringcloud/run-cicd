@@ -70,8 +70,10 @@ podTemplate(
 					imageTag = props["image_tag"]
 					image = "${imageRegistry}/"+props["image_project"]+"/${imageRepository}"
 
-					// read configuration
+					// read configuration(ConfigMap, Secret)
 					sh "${cicdResourceHome}/cmd/read-config ${profile} . cm,secret ${configServer}"
+					/// read application variables  
+					sh "${cicdResourceHome}/cmd/read-config ${profile} . profile ${configServer}"
 				}
 			}
 
