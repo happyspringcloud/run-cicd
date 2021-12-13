@@ -28,7 +28,7 @@ if ([ $# -lt 4 ]) || ([ $# -eq 1 ] && [ "$1" == "-h" -o "$1" == "--help" ]); the
   echo " root directory: project의 최상위 디렉토리. '.'은 현재 디렉토리 의미함. "
   echo " config kinds: 읽은 config 종류로 cicd,cm,secret중 지정하며, comma로 복수값 지정 가능함 "
   echo " config server: config server의 ingress명 "
-  echo " ex) ./read-config prod ~/worki cicd,cm,secret config-server"
+  echo " ex) ./read-config prod ~/work cicd,cm,secret config-server"
   echo " ex) ./read-config prod . cicd config-server"
   exit 1
 fi
@@ -76,6 +76,10 @@ function mkFile() {
       fi
     elif [ "${CONFIG_KIND}" == "secret" ]; then
       if [[ "$nm" =~ "secret-" ]] && [[ "$nm" =~ ".properties" ]]; then
+        switch=on
+      fi
+    elif [ "${CONFIG_KIND}" == "profile" ]; then
+      if [[ "$nm" =~ "${profile}" ]] && [[ "$nm" =~ ".properties" ]]; then
         switch=on
       fi
     fi
