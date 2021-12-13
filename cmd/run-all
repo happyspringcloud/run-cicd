@@ -58,6 +58,9 @@ else
   # read configuration
   ${CTRLDIR}/cmd/read-config ${profile} ${basedir} cm,secret ${configserver}
   if [ $? -eq 1 ]; then exit 1; fi
+
+  ${CTRLDIR}/cmd/read-config ${profile} ${basedir} profile ${configserver}
+  if [ $? -eq 1 ]; then exit 1; fi
 fi 
 
 # if the lang is java, do maven build. 

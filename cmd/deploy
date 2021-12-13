@@ -107,7 +107,7 @@ echo ""
 
 # set variables from config.properties: converted from '.' to '_'
 echo "STEP2. Set environment variables "
-if [ -f ${basedir}/deploy/cicd.properties ]; then
+if [ -f ${basedir}/deploy/cicd.properties ]; then  # Use config server 
   eval $(${CTRLDIR}/cmd/set-env ${basedir}/deploy/cicd.properties)
 else
   if [ -f ${basedir}/cicd/cicd-common.properties ]; then  #NOT use config server 
@@ -187,6 +187,12 @@ fi
 # add cicd.properties to environments
 cat ${basedir}/deploy/cicd.properties >> ${tmp}
 
+if [ -f ${basedir}/deploy/profile.properties ]; then  # appl. variables (use config server) 
+  echo "" >> ${tmp}
+  cat ${basedir}/deploy/profile.properties >> ${tmp}
+  echo "" >> ${tmp}
+fi
+
 # project폴더의 cm-common.env, cm-{profile}.env파일 내용을 추가
 if [ -f ${basedir}/cicd/cm-common.env ]; then
   echo "" >> ${tmp}
@@ -199,6 +205,20 @@ if [ -f ${basedir}/cicd/cm-${profile}.env ]; then
   cat ${basedir}/cicd/cm-${profile}.env >> ${tmp}
   echo "" >> ${tmp}
 fi
+
+# project폴더의 common.properties, {profile}.properties 파일 내용을 추가
+if [ -f ${basedir}/cicd/common.properties ]; then
+  echo "" >> ${tmp}
+  cat ${basedir}/cicd/common.properties >> ${tmp}
+  echo "" >> ${tmp}
+fi
+
+if [ -f ${basedir}/cicd/${profile}.properties ]; then
+  echo "" >> ${tmp}
+  cat ${basedir}/cicd/${profile}.properties >> ${tmp}
+  echo "" >> ${tmp}
+fi
+
 sort -u ${tmp} > ${filepath}
 
 generate_cm

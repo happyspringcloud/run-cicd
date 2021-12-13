@@ -134,8 +134,13 @@ for kind in ${configs}
 do
   CONFIG_KIND=${kind}
   echo "read config ->  ${kind}"
+
+  if [ "profile" == "${kind}" ]; then  # ex) variables for application
+    url=${uri}/common,${profile}
+  else    
+    url=${uri}/${kind}-common,${kind}-${profile}
+  fi 
   fn=${kind}.json
-  url=${uri}/${kind}-common,${kind}-${profile}
   ofn=${basedir}/deploy/${kind}.properties
   echo "" > ${ofn}
 
