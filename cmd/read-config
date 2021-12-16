@@ -78,10 +78,6 @@ function mkFile() {
       if [[ "$nm" =~ "secret-" ]] && [[ "$nm" =~ ".properties" ]]; then
         switch=on
       fi
-    elif [ "${CONFIG_KIND}" == "profile" ]; then
-      if [[ "$nm" =~ "${profile}" ]] && [[ "$nm" =~ ".properties" ]]; then
-        switch=on
-      fi
     fi
 
     if [ "${switch}" == "off" ]; then
@@ -138,12 +134,9 @@ for kind in ${configs}
 do
   CONFIG_KIND=${kind}
   echo "read config ->  ${kind}"
-
-  if [ "profile" == "${kind}" ]; then  # ex) variables for application
-    url=${uri}/common,${profile}
-  else    
-    url=${uri}/${kind}-common,${kind}-${profile}
-  fi 
+   
+  url=${uri}/${kind}-common,${kind}-${profile}
+  
   fn=${kind}.json
   ofn=${basedir}/deploy/${kind}.properties
   echo "" > ${ofn}

@@ -187,12 +187,6 @@ fi
 # add cicd.properties to environments
 cat ${basedir}/deploy/cicd.properties >> ${tmp}
 
-if [ -f ${basedir}/deploy/profile.properties ]; then  # appl. variables (use config server) 
-  echo "" >> ${tmp}
-  cat ${basedir}/deploy/profile.properties >> ${tmp}
-  echo "" >> ${tmp}
-fi
-
 # project폴더의 cm-common.env, cm-{profile}.env파일 내용을 추가
 if [ -f ${basedir}/cicd/cm-common.env ]; then
   echo "" >> ${tmp}
@@ -203,19 +197,6 @@ fi
 if [ -f ${basedir}/cicd/cm-${profile}.env ]; then
   echo "" >> ${tmp}
   cat ${basedir}/cicd/cm-${profile}.env >> ${tmp}
-  echo "" >> ${tmp}
-fi
-
-# project폴더의 common.properties, {profile}.properties 파일 내용을 추가
-if [ -f ${basedir}/cicd/common.properties ]; then
-  echo "" >> ${tmp}
-  cat ${basedir}/cicd/common.properties >> ${tmp}
-  echo "" >> ${tmp}
-fi
-
-if [ -f ${basedir}/cicd/${profile}.properties ]; then
-  echo "" >> ${tmp}
-  cat ${basedir}/cicd/${profile}.properties >> ${tmp}
   echo "" >> ${tmp}
 fi
 

@@ -72,8 +72,7 @@ podTemplate(
 
 					// read configuration(ConfigMap, Secret)
 					sh "${cicdResourceHome}/cmd/read-config ${profile} . cm,secret ${configServer}"
-					/// read application variables  
-					//sh "${cicdResourceHome}/cmd/read-config ${profile} . profile ${configServer}"
+					
 				}
 			}
 
