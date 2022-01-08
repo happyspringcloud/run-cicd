@@ -63,7 +63,7 @@ if [ "${devlang}" == "java" ]; then
 elif [ "${devlang}" == "nodejs" ]; then
   dockerfile_name=Dockerfile4nodejs
   if [ "" == "${container_base_image}" ]; then
-    container_base_image=node:carbon
+    container_base_image=node:slim
   fi
 elif [ "${devlang}" == "react" ]; then
   dockerfile_name=Dockerfile4react
