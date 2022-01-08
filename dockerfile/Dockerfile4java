@@ -1,10 +1,10 @@
 #VERSION:1.0
 #FROM openjdk:11-jre-slim
-FROM openjdk:11-jre-slim
+FROM {{ BASE_IMAGE }}
 
 ARG ARTIFACTORY_FILE
 ENV ARTIFACTORY_FILE ${ARTIFACTORY_FILE}
-ENV ARTIFACTORY_HOME /usr/artifactory
+ENV ARTIFACTORY_HOME /home/docker
 
 # Add a docker user, make work dir
 RUN adduser --disabled-password --gecos "" docker && echo "docker ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && mkdir -p ${ARTIFACTORY_HOME} && chown docker:docker ${ARTIFACTORY_HOME}
